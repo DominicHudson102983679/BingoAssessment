@@ -25,13 +25,11 @@ namespace BingoAssessment
                 numList.Add(i);
                 Console.WriteLine(i);
             }
-
+            
             Console.WriteLine("The numbers in this game will range from 1 to " + numList.Capacity);
-            Console.WriteLine();
-
+            
             HomeMenu(upperLimit, numList, removedList);
 
-            // home menu
             static void HomeMenu(int upperLimit, List<int> numList, List<int> removedList)
             {
                 List<int> drawnIndex = new List<int> { };
@@ -55,11 +53,11 @@ namespace BingoAssessment
                 }
                 else if (menuSelect == "2")
                 {
-                    ViewDrawn(removedList, numList, upperLimit);
+                    ViewAllDrawn(removedList, numList, upperLimit);
                 }
                 else if (menuSelect == "3")
                 {
-                    CheckDrawn(numList);
+                    CheckDrawn(upperLimit, numList, removedList);
                 } 
                 else if (menuSelect == "4")
                 {
@@ -116,14 +114,22 @@ namespace BingoAssessment
                 }
             };
 
-
-            static void ViewDrawn(List<int> removedList, List <int> numList, int upperLimit)
+            static void ViewAllDrawn(List<int> removedList, List <int> numList, int upperLimit)
             {
                 Console.WriteLine("The numbers that have been drawn so far are:");
-                Console.WriteLine();
 
+                removedList.Sort();
                 foreach (object i in removedList)
                 {
+                    Console.WriteLine(i);
+                };
+
+                Console.WriteLine();
+
+                Console.WriteLine("These numbers still need to be picked:");
+                numList.Sort();
+                foreach (object i in numList)
+                {    
                     Console.WriteLine(i);
                 };
 
@@ -133,18 +139,55 @@ namespace BingoAssessment
             };
 
 
-            static void CheckDrawn(List <int> numList)
+            static void CheckDrawn(int upperLimit, List <int> numList, List <int> removedList)
             {
-                foreach (object i in numList)
+                Console.WriteLine("Input a number to see if its been drawn yet");
+                
+                int numCheck = Convert.ToInt32(Console.ReadLine());
+
+                if (removedList.Contains(numCheck) == true)
+                {   
+                    Console.WriteLine(numCheck + " has already been drawn");
+                    Console.WriteLine();
+                } 
+                else if (numCheck > numList.Capacity)
                 {
-                    Console.WriteLine(i + " has been drawn");
+                    Console.WriteLine("This number is not selectable in this Bingo game");
+                } 
+                else if (numCheck < 1)
+                {
+                    Console.WriteLine("This number is not selectable in this Bingo game");
                 }
+                else 
+                {
+                    Console.WriteLine(numCheck + " has not been drawn yet");
+                    Console.WriteLine();
+                }
+
+                Console.WriteLine("-----------------------");
+                Console.WriteLine("Input e to exit");
+                Console.WriteLine();
+                Console.WriteLine("Input any other key to check another number");
+                
+                string exitCheckDrawn = Console.ReadLine();
+
+                if (exitCheckDrawn == "e")
+                {
+                    HomeMenu(upperLimit, numList, removedList);
+                }
+                else 
+                {
+                    Console.WriteLine();
+                    CheckDrawn(upperLimit, numList, removedList);
+                } 
+                    
             };
 
 
             static void ExitApp()
             {
-                Console.WriteLine("closing application");
+                Console.WriteLine("Thank you for playing");
+                Environment.Exit(0);
             };
 
             static void InvalidMenuSelect(int upperLimit, List<int> numList, List<int> removedList)
