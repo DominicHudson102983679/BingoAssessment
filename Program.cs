@@ -17,34 +17,25 @@ namespace BingoAssessment
             int upperLimit = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine();
 
-            int[] maxNum = new int[upperLimit];
-            
-            int[] notDrawnList = new int[upperLimit];
+            List<int> numList = new List<int>(upperLimit);
+            List<int> removedList = new List<int>();
 
-            int minNum = 0;
-            int index = 0;
-            int[] numArray = new int [upperLimit];
-            
-            
-            while (minNum < maxNum.Length)
+            for (int i = 1; i <= numList.Capacity; i++)
             {
-                // i dont know how I got this to work but it just does somehow
-                numArray[index] = upperLimit;
-                Console.WriteLine(numArray[index]);
-                index++;
-                minNum++;
-                upperLimit--;  
+                numList.Add(i);
+                Console.WriteLine(i);
             }
-            
-            Console.WriteLine("The numbers in this game will range from 1 to " + numArray.Length);
+
+            Console.WriteLine("The numbers in this game will range from 1 to " + numList.Capacity);
             Console.WriteLine();
 
-            HomeMenu(minNum, upperLimit, maxNum, numArray);
+            HomeMenu(upperLimit, numList, removedList);
 
             // home menu
-            static void HomeMenu(int minNum, int upperLimit, int [] maxNum, int [] numArray)
+            static void HomeMenu(int upperLimit, List<int> numList, List<int> removedList)
             {
-                
+                List<int> drawnIndex = new List<int> { };
+
                 Console.WriteLine(" ");
                 Console.WriteLine("-----------------------------------------------------");
                 Console.WriteLine(" ");
@@ -54,78 +45,100 @@ namespace BingoAssessment
                 Console.WriteLine("3. Check specific number");
                 Console.WriteLine("4. Exit");
                 Console.WriteLine(" ");
-  
+
                 string menuSelect = Console.ReadLine();
                 Console.WriteLine();
 
                 if (menuSelect == "1")
                 {
-                    DrawNext(numArray);             
+                    DrawNext(numList, upperLimit, removedList);
                 }
                 else if (menuSelect == "2")
                 {
-                    ViewDrawn(maxNum);
+                    ViewDrawn(removedList, numList, upperLimit);
                 }
                 else if (menuSelect == "3")
                 {
-                    CheckDrawn();
-                } else if (menuSelect == "4")
+                    CheckDrawn(numList);
+                } 
+                else if (menuSelect == "4")
                 {
                     ExitApp();
-                } else
+                } 
+                else
                 {
-                    InvalidMenuSelect(minNum, upperLimit, maxNum, numArray);       
+                    InvalidMenuSelect(upperLimit, numList, removedList);
                 }
 
             }
 
-            static void DrawNext(int [] numArray)
+            static void DrawNext(List<int> numList, int upperLimit, List<int> removedList)
             {
-                
-                Random drawRandom = new Random();
+                Console.WriteLine("Press N to draw numbers");
+                Console.WriteLine("Press E to go back to the menu");
+                string drawNextSelect = Console.ReadLine();
 
-                // int[] notDrawnList = new int[numArray.Length];
+                nextNum(drawNextSelect, numList, upperLimit, removedList);
 
-                int drawnIndex = numArray[drawRandom.Next(numArray.Length)];
-                Console.WriteLine(drawnIndex);
-                int[] drawnList = new int[numArray.Length];
-                Console.WriteLine("Press N to draw another number:");
-                string drawAnother = Console.ReadLine();
-
-                while (drawAnother == "N")
+                static void nextNum(string drawNextSelect, List<int> numList, int upperLimit, List<int> removedList)
                 {
-                    Console.WriteLine("--------" + drawnIndex);
+                    Console.ReadLine();
+                    if (drawNextSelect == "n")
+                    {
+                        Random random = new Random();
+                           
+                        int num = numList[random.Next(numList.Count)];
+                        int index = num - 1;
+
+                        numList.Remove(num);
+                        removedList.Add(num);
+                         
+                        if (numList.Count < 1)
+                        {
+                            Console.WriteLine("The last number is: " + num);
+                            Console.WriteLine();
+                            Console.WriteLine("All numbers drawn. Returning to Home Menu");
+                            HomeMenu(upperLimit, numList, removedList);
+                        }
+                        else if (numList.Capacity > 1)
+                        {
+                            Console.WriteLine("Next number is: " + num);
+                            string exit = Console.ReadLine();
+                            if (exit == "e") 
+                            {
+                               HomeMenu(upperLimit, numList, removedList);
+                            } 
+                            else
+                            
+                            nextNum(drawNextSelect, numList, upperLimit, removedList);
+                        }
+                    }        
                 }
-                
-
-                // drawRandom.Next(maxNum, maxNum.Length);
-
-                // Console.WriteLine(maxNum[drawRandom]{ drawRandom });
-                //int drawnNums = 
-                
-                // add number to list of selected numbers
-
-                // return to DrawNext
-
-                // draw another random number not already selected
-                
             };
 
 
-            static void ViewDrawn(int [] maxNum)
+            static void ViewDrawn(List<int> removedList, List <int> numList, int upperLimit)
             {
-                // int[] drawnList = new int[maxNum.Length];
-
-                // return numbers collected from list in DrawNext
+                Console.WriteLine("The numbers that have been drawn so far are:");
                 Console.WriteLine();
 
+                foreach (object i in removedList)
+                {
+                    Console.WriteLine(i);
+                };
+
+                Console.WriteLine();
+                Console.WriteLine("Returning to home menu");
+                HomeMenu(upperLimit, removedList, numList);
             };
 
 
-            static void CheckDrawn()
+            static void CheckDrawn(List <int> numList)
             {
-                // check for specific number from list in DrawNext / if statement
-                Console.WriteLine("__ has been drawn:");
+                foreach (object i in numList)
+                {
+                    Console.WriteLine(i + " has been drawn");
+                }
             };
 
 
@@ -134,17 +147,12 @@ namespace BingoAssessment
                 Console.WriteLine("closing application");
             };
 
-            static void InvalidMenuSelect(int minNum, int upperLimit, int [] maxNum, int[] numArray)
+            static void InvalidMenuSelect(int upperLimit, List<int> numList, List<int> removedList)
             {
                 Console.WriteLine("Invalid option. Try Again");
                 Console.WriteLine();
-                HomeMenu(minNum, upperLimit, maxNum, numArray);
+                HomeMenu(upperLimit, numList, removedList);
             }
-
-
-
-
-
 
         }
     }
