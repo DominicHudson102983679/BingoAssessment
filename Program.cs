@@ -14,22 +14,32 @@ namespace BingoAssessment
             Console.WriteLine("The number cannot be a non-numerical value");
             Console.WriteLine();
 
-            int upperLimit = Convert.ToInt32(Console.ReadLine());
+            string stringInput = Console.ReadLine();
+            int input;
+
+            if (int.TryParse(stringInput, out input))
+            {} 
+            else
+            {
+                Console.WriteLine("Not a number");
+            }
+            
+            int upperLimit = input;
             Console.WriteLine();
 
             List<int> numList = new List<int>(upperLimit);
             List<int> removedList = new List<int>();
-
+  
             for (int i = 1; i <= numList.Capacity; i++)
             {
                 numList.Add(i);
-                Console.WriteLine(i);
             }
             
             Console.WriteLine("The numbers in this game will range from 1 to " + numList.Capacity);
-            
+
             HomeMenu(upperLimit, numList, removedList);
 
+            // home menu
             static void HomeMenu(int upperLimit, List<int> numList, List<int> removedList)
             {
                 List<int> drawnIndex = new List<int> { };
@@ -70,15 +80,16 @@ namespace BingoAssessment
 
             }
 
-            static void DrawNext(List<int> numList, int upperLimit, List<int> removedList)
+            static List<int> DrawNext(List<int> numList, int upperLimit, List<int> removedList)
             {
                 Console.WriteLine("Press N to draw numbers");
                 Console.WriteLine("Press E to go back to the menu");
                 string drawNextSelect = Console.ReadLine();
 
                 nextNum(drawNextSelect, numList, upperLimit, removedList);
-
-                static void nextNum(string drawNextSelect, List<int> numList, int upperLimit, List<int> removedList)
+                return removedList;
+                
+                static List<int> nextNum(string drawNextSelect, List<int> numList, int upperLimit, List<int> removedList)
                 {
                     Console.ReadLine();
                     if (drawNextSelect == "n")
@@ -90,13 +101,14 @@ namespace BingoAssessment
 
                         numList.Remove(num);
                         removedList.Add(num);
-                         
+               
                         if (numList.Count < 1)
                         {
                             Console.WriteLine("The last number is: " + num);
                             Console.WriteLine();
                             Console.WriteLine("All numbers drawn. Returning to Home Menu");
                             HomeMenu(upperLimit, numList, removedList);
+                            return numList;
                         }
                         else if (numList.Capacity > 1)
                         {
@@ -110,34 +122,52 @@ namespace BingoAssessment
                             
                             nextNum(drawNextSelect, numList, upperLimit, removedList);
                         }
-                    }        
+                    }
+                    return numList;
                 }
             };
 
-            static void ViewAllDrawn(List<int> removedList, List <int> numList, int upperLimit)
-            {
-                Console.WriteLine("The numbers that have been drawn so far are:");
 
-                removedList.Sort();
-                foreach (object i in removedList)
+            static List <int> ViewAllDrawn(List<int> removedList, List <int> numList, int upperLimit)
+            {
+                Console.WriteLine("Enter any key to view numbers in the order they were drawn");
+                Console.WriteLine("Enter 1 to view drawn numbers in numerical order ");
+
+                string sortType = Console.ReadLine();
+
+                Console.WriteLine("The numbers that have been drawn so far are:");
+                if (sortType == "1") {
+                    removedList.Sort();
+                    foreach (object i in removedList)
+                    {
+                        Console.WriteLine(i);
+                    };
+
+                } 
+                
+                else
                 {
-                    Console.WriteLine(i);
-                };
+                    foreach (object i in removedList)
+                    {
+                        Console.WriteLine(i);        
+                    };
+                }
 
                 Console.WriteLine();
-
                 Console.WriteLine("These numbers still need to be picked:");
+
                 numList.Sort();
                 foreach (object i in numList)
-                {    
+                {               
                     Console.WriteLine(i);
                 };
-
+ 
                 Console.WriteLine();
                 Console.WriteLine("Returning to home menu");
+                
                 HomeMenu(upperLimit, removedList, numList);
+                return removedList;
             };
-
 
             static void CheckDrawn(int upperLimit, List <int> numList, List <int> removedList)
             {
@@ -165,6 +195,7 @@ namespace BingoAssessment
                 }
 
                 Console.WriteLine("-----------------------");
+                Console.WriteLine();
                 Console.WriteLine("Input e to exit");
                 Console.WriteLine();
                 Console.WriteLine("Input any other key to check another number");
